@@ -11,6 +11,7 @@ class Process:
 		self.size = s
 		self.priority = priority
 		self.time_created = time_created
+		self.cpu_time = 0
 		self.num_of_pages = self.size / int(page_size)
 		if self.size % page_size != 0:
 			self.num_of_pages += 1
@@ -25,6 +26,9 @@ class Process:
 
 	def getPriority():
 		return self.priority
+
+	def addCPUTime(start, end):
+		self.cpu_time = self.cpu_time + (end - start)
 	
 	# Defines how to compare two Process objects.
 	def __lt__(self, other):
