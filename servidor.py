@@ -46,21 +46,21 @@ connection, client_address = sock.accept()
 # Assigns the RealMemory parameter to the object with the Simulation parameters.
 def real_mem_param(*p):
 	params = p[0]
-	sim_param.real_memory = params
+	sim_param.real_memory = int(params[0])
 	print(sim_param.real_memory)
 	connection.send("parametros:" + ', '.join(params))
 
 # Assigns the SwapMemory parameter to the object with the Simulation parameters.
 def swap_mem_param(*p):
 	params = p[0]
-	sim_param.swap_memory = params
+	sim_param.swap_memory = int(params[0])
 	print(sim_param.swap_memory)
 	connection.send("parametros:" + ', '.join(params))
 
 # Assigns the PageSize parameter to the object with the Simulation parameters.
 def page_size_param(*p):
 	params = p[0]
-	sim_param.page_size = params
+	sim_param.page_size = int(params[0])
 	print(sim_param.page_size)
 	connection.send("parametros:" + ', '.join(params))
 
@@ -88,10 +88,10 @@ def create_priority(*p):
 	# Process to insert
 	my_p = None
 	if start_time is None:
-		my_p = process.Process(size, priority, 0.00)
+		my_p = process.Process(size, priority, 0.00, sim_param.page_size * KB)
 		start_time = time.time()
 	else:
-		my_p = process.Process(size, priority, time.time() - start_time)
+		my_p = process.Process(size, priority, time.time() - start_time, int(sim_param.page_size) * KB)
 
 	cpu_obj.addProcess(my_p)
 	msg = "{:0.2f} process {} created size {} pages".format(my_p.time_created, my_p.pid, my_p.num_of_pages)
