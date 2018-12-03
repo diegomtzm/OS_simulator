@@ -1,5 +1,5 @@
 from texttable import Texttable as tt
-import Process as p
+import process as p
 import ready_queue as rq #queue
 import cpu
 

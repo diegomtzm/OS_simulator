@@ -54,7 +54,7 @@ def initialize():
 
 	# Memory initialization
 	global memory_obj 
-	memory_obj = memory.Memory(sim_param.real_memory, sim_param.page_size * KB, swapping_obj)
+	memory_obj = memory.Memory(sim_param.real_memory, sim_param.page_size, swapping_obj)
 
 # Assigns the RealMemory parameter to the object with the Simulation parameters.
 def real_mem_param(*p):
@@ -85,17 +85,20 @@ def create(*p):
 def address(*p):
 	params = p[0]
 	pid = int(params[0])
-	v = params[1]
-	process = int(cpu_obj.current_process)
-	if process != pid:
+	v = int(params[1])
+	process = cpu_obj.current_process
+	pr_id = process.pid
+	page_num = 0
+	if int(pr_id) != int(pid):
 		msg = "{:0.2f} {} no se está ejecutando. Se ignora.".format(time.time(), pid)
 	#verificar tamaño de proceso
 	else:
 		page_num = memory_obj.getProcessPage(pid)
 		if not page_num:
-			page_num = memory_obj.loadProcess(p)
-		
-		real_address = page_num * KB + v
+			print("load process")
+			page_num = memory_obj.loadProcess(pid)
+		print(page_num)
+		real_address = int(page_num) * KB + v
 
 		msg = "{:0.2f} real address: {}".format(time.time(),real_address)
 	
@@ -120,6 +123,8 @@ def create_priority(*p):
 		my_p = process.Process(size, priority, time.time() - start_time, int(sim_param.page_size) * KB)
 
 	cpu_obj.addProcess(my_p)
+	memory_obj.loadProcess(my_p.pid)
+
 	msg = "{:0.2f} process {} created size {} pages".format(my_p.time_created, my_p.pid, my_p.num_of_pages)
 	connection.send(msg)
 
