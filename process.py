@@ -18,16 +18,16 @@ class Process:
 
 		PIDCounter += 1
 
-	def getPID():
+	def getPID(self):
 		return self.pid
 
-	def getSize():
+	def getSize(self):
 		return self.size
 
-	def getPriority():
+	def getPriority(self):
 		return self.priority
 
-	def addCPUTime(start, end):
+	def addCPUTime(self, start, end):
 		self.cpu_time = self.cpu_time + (end - start)
 	
 	# Defines how to compare two Process objects.

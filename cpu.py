@@ -18,10 +18,10 @@ class CPU:
 				if next_process != 'empty':
 					# Begin timer for process.
 					self.process_start_time = time.time()
-					self.current_process = process
+					self.current_process = next_process
 			except:
 				pass
-		elif checkFrontQueue():
+		elif self.checkFrontQueue():
 			next_process = self.ready_q.getNextProcess()
 			
 			# Adds the time it was in the CPU.
@@ -35,11 +35,12 @@ class CPU:
 	# Checks if the process that was inserted into queue has higher priority than cur proc.
 	def checkFrontQueue(self):
 		next_process = self.ready_q.peekNextProcess()
-		return next_process.priority > self.current_process.priority
+		if next_process == 'empty':
+			return False
+		return next_process.getPriority() > self.current_process.getPriority()
 
 	# Adds process to the queue and competes for CPU.
 	def addProcess(self, p):
 		self.ready_q.insertProcess(p)
 		self.compete()
-
 
