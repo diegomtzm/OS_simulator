@@ -10,7 +10,7 @@ class ReadyQueue:
 
 	# Gets the next process, removing it from the queue.
 	def getNextProcess(self):
-		if len(self.queue == 0):
+		if not self.queue:
 			return 'empty'
 		else:
 			next_process = self.queue[0]
@@ -19,7 +19,7 @@ class ReadyQueue:
 
 	# Returns the next process without removing it from the queue.
 	def peekNextProcess(self):
-		if len(self.queue == 0):
+		if not self.queue:
 			return 'empty'
 		else:
 			return self.queue[0]
