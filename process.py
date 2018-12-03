@@ -21,6 +21,9 @@ class Process:
 	def getPID(self):
 		return self.pid
 
+	def getTime(self):
+		return self.time_created
+		
 	def getSize(self):
 		return self.size
 
