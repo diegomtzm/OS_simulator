@@ -137,8 +137,10 @@ def quantum(*p):
 
 def termina_proceso(*p):
 	params = p[0]
-	print (params)
-	connection.send("parametros: " + ', '.join(params))
+	pid = params[0]
+	msg = "{:0.2f} Proceso {} terminado.".format(my_p.time_created, pid)
+	connection.send(msg)
+	
 	return "funcion fin"
 
 def end_simulation(*p):
