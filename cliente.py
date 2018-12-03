@@ -4,6 +4,7 @@
 
 import socket
 import sys
+import endP as finalP
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +19,7 @@ sock.connect(server_address)
 while True:
     mensaje = raw_input("Mensaje a enviar al servidor: ")
     
-    if mensaje == "salir":
+    if mensaje == "End":
         break
     
     sock.sendall(mensaje)
@@ -29,6 +30,7 @@ while True:
 
 
 print >>sys.stderr, 'closing socket'
+finalP
 sock.close()
 
 def main(args):
