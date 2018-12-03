@@ -131,7 +131,12 @@ try:
     # Receive the data 
 	while True:   
 		msg = connection.recv(256)
-		data = msg.split()
+
+		if "//" in msg:
+			msgSplit = msg.split("//")
+			data = msgSplit[0]
+
+		command = data.split()
 
 		comando = {
 			'RealMemory': real_mem_param,
@@ -143,9 +148,9 @@ try:
 			'Quantum': quantum,
 			'Fin': termina_proceso,
 			'End': end_simulation,
-		}.get(data[0], invalid)(data[1:])
+		}.get(command[0], invalid)(command[1:])
 
-		if data:
+		if command:
 			print >>sys.stderr, 'server received "%s"' % comando
 		else:
 			print >>sys.stderr, 'no data from', client_address
