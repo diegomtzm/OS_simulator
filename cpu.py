@@ -44,3 +44,4 @@ class CPU:
 		self.ready_q.insertProcess(p)
 		self.compete()
 
+		

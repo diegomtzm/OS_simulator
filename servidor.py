@@ -9,17 +9,20 @@ import time
 import simulation_parameters as sp
 import process
 import cpu
+import memory
+import swapping
 
 # Global variables
 KB = 1024
 start_time = None
+swapping_obj = None
+memory_obj = None
 
 # Object to store all the OS simulation parameters
 sim_param = sp.SimulationParameters()
 
 # CPU initialization with its ready queue.
 cpu_obj = cpu.CPU()
-
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,6 +46,16 @@ connection, client_address = sock.accept()
 # accept() returns an open connection between the server and client, along with the address of the client.
 # The connection is actually a different socket on another port (assigned by the kernel). Data is read from the connection with recv() and transmitted with sendall().
 
+
+def initialize():
+	# Swapping initialization
+	global swapping_obj 
+	swapping_obj = swapping.Swapping(sim_param.swap_memory, sim_param.page_size * KB)
+
+	# Memory initialization
+	global memory_obj 
+	memory_obj = memory.Memory(sim_param.real_memory, sim_param.page_size * KB, swapping_obj)
+
 # Assigns the RealMemory parameter to the object with the Simulation parameters.
 def real_mem_param(*p):
 	params = p[0]
@@ -63,17 +76,30 @@ def page_size_param(*p):
 	sim_param.page_size = int(params[0])
 	print(sim_param.page_size)
 	connection.send("parametros:" + ', '.join(params))
+	initialize()
 
 def create(*p):
-	params = p[0]
-	print (params)
-	connection.send("parametros: " + ', '.join(params))
+	connection.send("Scheduling: PrioExp, intente CreateP")
 	return "funcion create"
 
 def address(*p):
 	params = p[0]
-	print (params)
-	connection.send("parametros: " + ', '.join(params))
+	pid = int(params[0])
+	v = params[1]
+	process = int(cpu_obj.current_process)
+	if process != pid:
+		msg = "{:0.2f} {} no se está ejecutando. Se ignora.".format(time.time(), pid)
+	#verificar tamaño de proceso
+	else:
+		page_num = memory_obj.getProcessPage(pid)
+		if not page_num:
+			page_num = memory_obj.loadProcess(p)
+		
+		real_address = page_num * KB + v
+
+		msg = "{:0.2f} real address: {}".format(time.time(),real_address)
+	
+	connection.send(msg)
 	return "funcion address"
 
 def create_priority(*p):
@@ -101,11 +127,7 @@ def create_priority(*p):
 
 # Assigns the Quantum parameter to the object with the Simulation parameters.
 def quantum(*p):
-	params = p[0]
-	# Assign quantum to simulation parameters.
-	sim_param.quantum = params
-	print (sim_param.quantum)
-	connection.send("parametros: " + ', '.join(params))
+	connection.send("Scheduling: PrioExp, no hay quantum")
 	return "funcion quantum"
 
 def termina_proceso(*p):
@@ -123,7 +145,6 @@ def invalid(*p):
 	print ("Comando invalido")
 	connection.send("comando invalido")
 	return "funcion invalid"
-
 
 try:
 	print >>sys.stderr, 'connection from', client_address
@@ -148,7 +169,7 @@ try:
 			'CreateP': create_priority,
 			'Quantum': quantum,
 			'Fin': termina_proceso,
-			'End': end_simulation,
+			'End': end_simulation
 		}.get(command[0], invalid)(command[1:])
 
 		if command:
