@@ -4,7 +4,9 @@ PIDCounter = 1
 class Process:
 
 	# 's' is size in bytes
-	def __init__(self, s, priority = None, time_created):
+	def __init__(self, s = None, priority = None, time_created = None):
+		global PIDCounter
+		
 		self.pid = PIDCounter
 		self.size = s
 		self.priority = priority
@@ -20,7 +22,7 @@ class Process:
 
 	def getPriority():
 		return self.priority
-
-	# Defines how to compare two Process objects.
+	
+	# Defines how to compare two Process objects.
 	def __lt__(self, other):
 		return self.priority < other.priority

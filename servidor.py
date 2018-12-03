@@ -8,9 +8,18 @@ import time
 
 import simulation_parameters as sp
 import process
+import cpu
 
-# Object to store all the simulation parameters
+# Global variables
+KB = 1024
+start_time = None
+
+# Object to store all the OS simulation parameters
 sim_param = sp.SimulationParameters()
+
+# CPU initialization with its ready queue.
+cpu_obj = cpu.CPU()
+
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,9 +77,26 @@ def address(*p):
 	return "funcion address"
 
 def create_priority(*p):
+
+	global start_time
+	global cpu_obj
+
 	params = p[0]
-	print (params)
-	connection.send("parametros: " + ', '.join(params))
+	size = int(params[0])
+	priority = int(params[1])
+	print(params)
+	# Process to insert
+	my_p = None
+	if start_time is None:
+		my_p = process.Process(size, priority, 0.00)
+		start_time = time.time()
+	else:
+		my_p = process.Process(size, priority, time.time() - start_time)
+
+	cpu_obj.addProcess(my_p)
+	msg = "{:0.2f} process {} created size {} pages".format(my_p.time_created, my_p.pid, my_p.size / KB)
+	connection.send(msg)
+
 	return "funcion createp"
 
 # Assigns the Quantum parameter to the object with the Simulation parameters.
