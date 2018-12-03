@@ -131,6 +131,7 @@ try:
     # Receive the data 
 	while True:   
 		msg = connection.recv(256)
+		data = msg
 
 		if "//" in msg:
 			msgSplit = msg.split("//")
