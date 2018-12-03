@@ -6,6 +6,12 @@ import socket
 import sys
 import time
 
+import simulation_parameters as sp
+import process
+
+# Object to store all the simulation parameters
+sim_param = sp.SimulationParameters()
+
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -28,6 +34,27 @@ connection, client_address = sock.accept()
 # accept() returns an open connection between the server and client, along with the address of the client.
 # The connection is actually a different socket on another port (assigned by the kernel). Data is read from the connection with recv() and transmitted with sendall().
 
+# Assigns the RealMemory parameter to the object with the Simulation parameters.
+def real_mem_param(*p):
+	params = p[0]
+	sim_param.real_memory = params
+	print(sim_param.real_memory)
+	connection.send("parametros:" + ', '.join(params))
+
+# Assigns the SwapMemory parameter to the object with the Simulation parameters.
+def swap_mem_param(*p):
+	params = p[0]
+	sim_param.swap_memory = params
+	print(sim_param.swap_memory)
+	connection.send("parametros:" + ', '.join(params))
+
+# Assigns the PageSize parameter to the object with the Simulation parameters.
+def page_size_param(*p):
+	params = p[0]
+	sim_param.page_size = params
+	print(sim_param.page_size)
+	connection.send("parametros:" + ', '.join(params))
+
 def create(*p):
 	params = p[0]
 	print (params)
@@ -46,9 +73,12 @@ def create_priority(*p):
 	connection.send("parametros: " + ', '.join(params))
 	return "funcion createp"
 
+# Assigns the Quantum parameter to the object with the Simulation parameters.
 def quantum(*p):
 	params = p[0]
-	print (params)
+	# Assign quantum to simulation parameters.
+	sim_param.quantum = params
+	print (sim_param.quantum)
 	connection.send("parametros: " + ', '.join(params))
 	return "funcion quantum"
 
@@ -78,6 +108,9 @@ try:
 		data = msg.split()
 
 		comando = {
+			'RealMemory': real_mem_param,
+			'SwapMemory': swap_mem_param,
+			'PageSize': page_size_param,
 			'Create': create,
 			'Address': address,
 			'CreateP': create_priority,
