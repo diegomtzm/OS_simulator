@@ -11,6 +11,9 @@ class Process:
 		self.size = s
 		self.priority = priority
 		self.time_created = time_created
+		self.num_of_pages = self.size / 1024
+		if self.size % 1024 != 0:
+			self.num_of_pages += 1
 
 		PIDCounter += 1
 

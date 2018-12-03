@@ -94,7 +94,7 @@ def create_priority(*p):
 		my_p = process.Process(size, priority, time.time() - start_time)
 
 	cpu_obj.addProcess(my_p)
-	msg = "{:0.2f} process {} created size {} pages".format(my_p.time_created, my_p.pid, my_p.size / KB)
+	msg = "{:0.2f} process {} created size {} pages".format(my_p.time_created, my_p.pid, my_p.num_of_pages)
 	connection.send(msg)
 
 	return "funcion createp"
